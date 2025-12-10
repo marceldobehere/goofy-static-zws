@@ -43,6 +43,11 @@
 <div id="thanks">
     <h1>Thank you for using Goofy Link Shortener</h1>
     <p>Redirecting to <a id="redirect"></a></p>
+    <br>
+    <br>
+    <br>
+    <br>
+    <a href="./">Main Page</a>
 </div>
 
 <div id="main">
@@ -195,7 +200,7 @@
         redirectElem.textContent = result;
         redirectElem.href = result;
         setTimeout(() => {
-            window.location.replace(result);
+            //window.location.replace(result);
         }, 100);
     }
 
