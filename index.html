@@ -59,23 +59,41 @@
 
 
 <script>
+    // const DEFAULT_SHORT_CHARS = [
+    //     '\uDB40\uDC61',
+    //     '\uDB40\uDC62',
+    //     '\uDB40\uDC63',
+    //     '\uDB40\uDC64',
+    //     '\uDB40\uDC65',
+    //     '\uDB40\uDC66',
+    //     '\uDB40\uDC67',
+    //     '\uDB40\uDC68',
+    //     '\uDB40\uDC69',
+    //     '\uDB40\uDC6A',
+    //     '\uDB40\uDC6B',
+    //     '\uDB40\uDC6C',
+    //     '\uDB40\uDC6D',
+    //     '\uDB40\uDC6E',
+    //     '\uDB40\uDC6F',
+    //     '\uDB40\uDC70',
+    // ];
     const DEFAULT_SHORT_CHARS = [
-        '\uDB40\uDC61',
-        '\uDB40\uDC62',
-        '\uDB40\uDC63',
-        '\uDB40\uDC64',
-        '\uDB40\uDC65',
-        '\uDB40\uDC66',
-        '\uDB40\uDC67',
-        '\uDB40\uDC68',
-        '\uDB40\uDC69',
-        '\uDB40\uDC6A',
-        '\uDB40\uDC6B',
-        '\uDB40\uDC6C',
-        '\uDB40\uDC6D',
-        '\uDB40\uDC6E',
-        '\uDB40\uDC6F',
-        '\uDB40\uDC70',
+        '\uFE20',
+        '\uFE21',
+        '\uFE22',
+        '\uFE23',
+        '\uFE24',
+        '\uFE25',
+        '\uFE26',
+        '\uFE27',
+        '\uFE28',
+        '\uFE29',
+        '\uFE2A',
+        '\uFE2B',
+        '\uFE2C',
+        '\uFE2D',
+        '\uFE2E',
+        '\uFE2F',
     ];
     const ALLOWED_INVIS_CHARS = DEFAULT_SHORT_CHARS.join("");
     const ALLOWED_TEXT_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_-";
@@ -121,8 +139,11 @@
         const firstPart = (start == -1) ? currentUrl : currentUrl.substring(0, start);
 
         const extraText = prompt("If you want, you can add a normal link text here") || "";
+        let toAdd = "";
+        if (extraText.length !== 0)
+            toAdd = "_" + filter(extraText.toLowerCase().replaceAll(" ", "-"), ALLOWED_TEXT_CHARS)
 
-        const result = firstPart + "#" + shortenedPart + filter(extraText.toLowerCase().replaceAll(" ", "-"), ALLOWED_TEXT_CHARS);
+        const result = firstPart + "#" + shortenedPart + toAdd;
         console.log("Result: ", result)
         navigator.clipboard.writeText(result);
         alert("Link has been copied to clipboard");
@@ -137,6 +158,8 @@
             const idx = hexChars.indexOf(c);
             const nC = DEFAULT_SHORT_CHARS[idx];
             //console.log("> " + c + ": " + idx + " -> " + nC)
+            //if (i % 2 === 1)
+                res += "\u2E3C";
             res += nC;
         }
         return res;
@@ -145,11 +168,11 @@
     function unshorten(txt) {
 
         let res = "";
-        for (let i = 0; i < txt.length; i += 2) {
-            const c = txt.charAt(i) + txt.charAt(i + 1);
+        for (let i = 0; i < txt.length; i ++) {
+            const c = txt.charAt(i);
             const idx = DEFAULT_SHORT_CHARS.indexOf(c);
             const nC = hexChars[idx];
-            // console.log("> " + c + ": " + idx + " -> " + nC)
+            console.log("> " + c + ": " + idx + " -> " + nC)
             res += nC;
         }
         // console.log(res);
