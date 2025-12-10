@@ -1,0 +1,162 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Goofy ZWS</title>
+    <style>
+        :root {
+            --show1: none;
+            --show2: block;
+        }
+        #thanks {
+            display: var(--show1);
+        }
+        #main {
+            display: var(--show2);
+        }
+    </style>
+</head>
+<body>
+<script>
+    const DEFAULT_SHORT_CHARS = [
+        // '\u200C',
+        // '\u200D',
+        '\uDB40\uDC61',
+        '\uDB40\uDC62',
+        '\uDB40\uDC63',
+        '\uDB40\uDC64',
+        '\uDB40\uDC65',
+        '\uDB40\uDC66',
+        '\uDB40\uDC67',
+        '\uDB40\uDC68',
+        '\uDB40\uDC69',
+        '\uDB40\uDC6A',
+        '\uDB40\uDC6B',
+        '\uDB40\uDC6C',
+        '\uDB40\uDC6D',
+        '\uDB40\uDC6E',
+        '\uDB40\uDC6F',
+        '\uDB40\uDC70',
+        '\uDB40\uDC71',
+        '\uDB40\uDC72',
+        '\uDB40\uDC73',
+        '\uDB40\uDC74',
+        '\uDB40\uDC75',
+        '\uDB40\uDC76',
+        '\uDB40\uDC77',
+        '\uDB40\uDC78',
+        '\uDB40\uDC79',
+        '\uDB40\uDC7A',
+        '\uDB40\uDC7F',
+    ];
+
+    const hexChars = "0123456789abcdef";
+
+    function hexEncode(str) {
+        let hex, i;
+
+        let result = "";
+        for (i=0; i<str.length; i++) {
+            hex = str.charCodeAt(i).toString(16);
+            result += ("000"+hex).slice(-4);
+        }
+
+        return result
+    }
+
+    function hexDecode(str) {
+        let j;
+        let hexes = str.match(/.{1,4}/g) || [];
+        let back = "";
+        for(j = 0; j<hexes.length; j++) {
+            back += String.fromCharCode(parseInt(hexes[j], 16));
+        }
+
+        return back;
+    }
+
+    const currentUrl = decodeURIComponent(document.location.href);
+    // some code to set a css var to make display block/none depending on if there is a hashtag
+    // can have like a thank you for using goofy link shortener or so
+    // document.documentElement.style.cssText = "--show1: block; --show2: none;";
+</script>
+
+<div id="thanks">
+    <h1>Thank you for using Goofy Link Shortener</h1>
+    <p>Redirecting...</p>
+</div>
+
+<div id="main">
+    <h1>Goofy Link Shortener</h1>
+    <br>
+
+    <input id="link" placeholder="A">
+    <button id="btn" onclick="shortenLink()">Submit</button>
+</div>
+
+
+<script>
+    const linkElem = document.getElementById("link");
+    linkElem.value = "";
+
+    function shortenLink() {
+        const srcLink = linkElem.value;
+        console.log(srcLink);
+
+        const shortenedPart = shorten(srcLink);
+        const start = currentUrl.indexOf("#");
+        const firstPart = (start == -1) ? currentUrl : currentUrl.substring(0, start);
+
+        const result = firstPart + "#" + shortenedPart;
+        console.log("Result: ", result)
+        navigator.clipboard.writeText(result);
+        alert("Link has been copied to clipboard");
+    }
+
+    function shorten(link) {
+        const hex = hexEncode(link);
+        console.log(link, hex);
+        let res = "";
+        for (let i = 0; i < hex.length; i++) {
+            const c = hex.charAt(i);
+            const idx = hexChars.indexOf(c);
+            const nC = DEFAULT_SHORT_CHARS[idx];
+            //console.log("> " + c + ": " + idx + " -> " + nC)
+            res += nC;
+        }
+        return res;
+    }
+
+    function unshorten(txt) {
+
+        let res = "";
+        for (let i = 0; i < txt.length; i += 2) {
+            const c = txt.charAt(i) + txt.charAt(i + 1);
+            const idx = DEFAULT_SHORT_CHARS.indexOf(c);
+            const nC = hexChars[idx];
+            // console.log("> " + c + ": " + idx + " -> " + nC)
+            res += nC;
+        }
+        // console.log(res);
+        res = hexDecode(res);
+        // console.log(res);
+        return res;
+    }
+
+    function checkUrl() {
+        console.log(currentUrl);
+        const start = currentUrl.indexOf("#");
+        if (start == -1)
+            return;
+        const extra = currentUrl.substring(start + 1);
+        if (extra.length == "")
+            return;
+        // console.log("Short: " + extra);
+
+        const result = unshorten(extra);
+        console.log("Going to: " + result);
+        // window.location.replace(result);
+    }
+    checkUrl();
+</script>
+</body>
+</html>
