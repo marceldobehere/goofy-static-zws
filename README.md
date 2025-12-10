@@ -1,5 +1,5 @@
 # goofy-static-zws
-A "zero width" url shortener but statically hosted and very cursed
+A "zero width" url shortener but statically hosted and very cursed. You can try it [here](https://short.rocc.systems/ )
 
 It has an extra characterset for discord so that it works on there too. Adds one very cursed looking character to the link but should work fine
 
