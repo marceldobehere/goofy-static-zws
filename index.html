@@ -77,8 +77,8 @@
         '\uDB40\uDC6F',
         '\uDB40\uDC70',
     ];
-    const INVIS_CHARS = DEFAULT_SHORT_CHARS.join("");
-    const ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_-";
+    const ALLOWED_INVIS_CHARS = DEFAULT_SHORT_CHARS.join("");
+    const ALLOWED_TEXT_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_-";
 
     const hexChars = "0123456789abcdef";
 
@@ -109,6 +109,10 @@
         return back;
     }
 
+    function filter (inputStr, allowedChars) {
+        return inputStr.split("").filter(char => allowedChars.includes(char)).join("");
+    }
+
     function shortenLink() {
         const srcLink = linkElem.value;
         console.log(srcLink);
@@ -116,7 +120,9 @@
         const shortenedPart = shorten(srcLink);
         const firstPart = (start == -1) ? currentUrl : currentUrl.substring(0, start);
 
-        const result = firstPart + "#" + shortenedPart;
+        const extraText = prompt("If you want, you can add a normal link text here") || "";
+
+        const result = firstPart + "#" + shortenedPart + filter(extraText.toLowerCase().replaceAll(" ", "-"), ALLOWED_TEXT_CHARS);
         console.log("Result: ", result)
         navigator.clipboard.writeText(result);
         alert("Link has been copied to clipboard");
@@ -161,7 +167,7 @@
             return;
         // console.log("Short: " + extra);
 
-        const result = unshorten(extra);
+        const result = unshorten(filter(extra, ALLOWED_INVIS_CHARS));
         console.log("Going to: " + result);
         redirectElem.textContent = result;
         redirectElem.href = result;
