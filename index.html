@@ -1,7 +1,8 @@
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Goofy ZWS</title>
+    <link rel="icon" type="image/x-icon" href="lol.ico">
     <style>
         html {
             background: rgb(0, 31, 45);
@@ -177,7 +178,7 @@
             const c = txt.charAt(i);
             const idx = DEFAULT_SHORT_CHARS.indexOf(c);
             const nC = hexChars[idx];
-            console.log("> " + c + ": " + idx + " -> " + nC)
+            // console.log("> " + c + ": " + idx + " -> " + nC)
             res += nC;
         }
         // console.log(res);
@@ -200,7 +201,7 @@
         redirectElem.textContent = result;
         redirectElem.href = result;
         setTimeout(() => {
-            //window.location.replace(result);
+            window.location.replace(result);
         }, 100);
     }
 
