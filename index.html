@@ -55,35 +55,36 @@
     <h1>Goofy Link Shortener</h1>
     <br>
 
-    <input id="link" placeholder="https://example.com">
-    <button id="btn" onclick="shortenLink()">Submit</button>
+    <input id="link" placeholder="https://example.com"><br>
+    <button id="btn-a" onclick="shortenLink(true)">Generate (Normal)</button>
+    <button id="btn-b" onclick="shortenLink(false)">Generate (Discord)</button>
     <br>
-    <br>
+    <br><br>
     <br>
     <a href="https://github.com/marceldobehere/goofy-static-zws" target="_blank">Source</a>
 </div>
 
 
 <script>
-    // const DEFAULT_SHORT_CHARS = [
-    //     '\uDB40\uDC61',
-    //     '\uDB40\uDC62',
-    //     '\uDB40\uDC63',
-    //     '\uDB40\uDC64',
-    //     '\uDB40\uDC65',
-    //     '\uDB40\uDC66',
-    //     '\uDB40\uDC67',
-    //     '\uDB40\uDC68',
-    //     '\uDB40\uDC69',
-    //     '\uDB40\uDC6A',
-    //     '\uDB40\uDC6B',
-    //     '\uDB40\uDC6C',
-    //     '\uDB40\uDC6D',
-    //     '\uDB40\uDC6E',
-    //     '\uDB40\uDC6F',
-    //     '\uDB40\uDC70',
-    // ];
-    const DEFAULT_SHORT_CHARS = [
+     const DEFAULT_SHORT_CHARS_A = [
+        '\uDB40\uDC61',
+        '\uDB40\uDC62',
+        '\uDB40\uDC63',
+        '\uDB40\uDC64',
+        '\uDB40\uDC65',
+        '\uDB40\uDC66',
+        '\uDB40\uDC67',
+        '\uDB40\uDC68',
+        '\uDB40\uDC69',
+        '\uDB40\uDC6A',
+        '\uDB40\uDC6B',
+        '\uDB40\uDC6C',
+        '\uDB40\uDC6D',
+        '\uDB40\uDC6E',
+        '\uDB40\uDC6F',
+        '\uDB40\uDC70',
+    ];
+    const DEFAULT_SHORT_CHARS_B = [
         '\uFE20',
         '\uFE21',
         '\uFE22',
@@ -101,7 +102,7 @@
         '\uFE2E',
         '\uFE2F',
     ];
-    const ALLOWED_INVIS_CHARS = DEFAULT_SHORT_CHARS.join("");
+    const ALLOWED_INVIS_CHARS = DEFAULT_SHORT_CHARS_A.join("") + DEFAULT_SHORT_CHARS_B.join("");
     const ALLOWED_TEXT_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_-";
 
     const hexChars = "0123456789abcdef";
@@ -137,11 +138,11 @@
         return inputStr.split("").filter(char => allowedChars.includes(char)).join("");
     }
 
-    function shortenLink() {
+    function shortenLink(useNormal) {
         const srcLink = linkElem.value;
         console.log(srcLink);
 
-        const shortenedPart = shorten(srcLink);
+        const shortenedPart = shorten(srcLink, useNormal);
         const firstPart = (start == -1) ? currentUrl : currentUrl.substring(0, start);
 
         const extraText = prompt("If you want, you can add a normal link text here") || "";
@@ -155,28 +156,31 @@
         alert("Link has been copied to clipboard");
     }
 
-    function shorten(link) {
+    function shorten(link, useNormal) {
         const hex = hexEncode(link);
         console.log(link, hex);
         let res = "";
         for (let i = 0; i < hex.length; i++) {
             const c = hex.charAt(i);
             const idx = hexChars.indexOf(c);
-            const nC = DEFAULT_SHORT_CHARS[idx];
+            const nC = (useNormal ? DEFAULT_SHORT_CHARS_A : DEFAULT_SHORT_CHARS_B)[idx];
             //console.log("> " + c + ": " + idx + " -> " + nC)
             //if (i % 2 === 1)
+            if (!useNormal)
                 res += "\u2E3C";
             res += nC;
         }
         return res;
     }
 
-    function unshorten(txt) {
+    function unshorten(txt, useNormal) {
 
         let res = "";
-        for (let i = 0; i < txt.length; i ++) {
-            const c = txt.charAt(i);
-            const idx = DEFAULT_SHORT_CHARS.indexOf(c);
+        for (let i = 0; i < txt.length; i++) {
+            let c = txt.charAt(i);
+            if (useNormal)
+                c += txt.charAt(++i);
+            const idx = (useNormal ? DEFAULT_SHORT_CHARS_A : DEFAULT_SHORT_CHARS_B).indexOf(c);
             const nC = hexChars[idx];
             // console.log("> " + c + ": " + idx + " -> " + nC)
             res += nC;
@@ -196,7 +200,9 @@
             return;
         // console.log("Short: " + extra);
 
-        const result = unshorten(filter(extra, ALLOWED_INVIS_CHARS));
+        const useNormal = !extra.includes("\u2E3C");
+
+        const result = unshorten(filter(extra, ALLOWED_INVIS_CHARS), useNormal);
         console.log("Going to: " + result);
         redirectElem.textContent = result;
         redirectElem.href = result;
