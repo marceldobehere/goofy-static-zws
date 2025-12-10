@@ -194,7 +194,9 @@
         console.log("Going to: " + result);
         redirectElem.textContent = result;
         redirectElem.href = result;
-        // window.location.replace(result);
+        setTimeout(() => {
+            window.location.replace(result);
+        }, 100);
     }
 
     checkUrl();
